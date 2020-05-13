@@ -28,6 +28,7 @@ port(
 	Error			: in std_logic_vector(1 downto 0);		-- Repsonse code from top entity
 	IntRdy			: in std_logic;							-- Ready to write from top entity
 	Wrequest		: out std_logic;						-- request to write to registers
+	WSTB			: out std_logic_vector(1 downto 0);
 	Wdata			: out std_logic_vector(31 downto 0);
 	Waddr			: out std_logic_vector(31 downto 0)
 	
@@ -48,6 +49,7 @@ begin
 	S_AXI_AWREADY <= awready;
 	S_AXI_WREADY  <= wready;
 	S_AXI_BVALID  <= bvalid;
+	WSTB		  <= S_AXI_WSTB;
 	
 	State_Machine: process(S_AXI_ACLK, S_AXI_ARESETN)
 	begin

@@ -149,36 +149,40 @@ begin
 		
 	end process;
 
-process 
-begin 
-wait for 200ns;
-wait for 6ns;
-wait until S_AXI_ACLK='1';
-wait until S_AXI_ACLK='1';
-wait until S_AXI_ACLK='1';
-wait until S_AXI_ACLK='1';
-S_AXI_ARADDR<="11111111111111111111111111111111";
-S_AXI_ARVALID<='1';
-wait until S_AXI_ACLK='1'; -- address data and read enable is latched to internal signal
-S_AXI_ARVALID<='0';
-wait until S_AXI_ACLK='1'; -- waiting for register to retrieve data
-wait until S_AXI_ACLK='1'; -- on this clock edge it is simulated that register module sets the acknowledge bit.  read enable and address are reset 
-read_data<="01010101010101010101010101010101";
-read_ack<='1';
-read_resp<= "11";
-
-wait until S_AXI_ACLK ='1'; -- at this point valid and rdata and resp should be set to register module returned values.  read enable and read address reset
-S_AXI_RREADY<='1';--setting master ready to recieve data.  one clock edge later sm switches to idle state.  
-wait until S_AXI_ACLK ='1'; -- new transaction should be allowed during these clock cycles
-wait until S_AXI_ACLK ='1'; -- arready back to 1
-wait until S_AXI_ACLK ='1'; -- can begin new transaction
-wait until S_AXI_ACLK ='1'; 
-S_AXI_ARVALID<='1';
---S_AXI_ARESETN<='0'; -- no new transaction should start from here on.  
-wait;
-
-
-end process;
+	process 
+	begin 
+		wait for 200ns;
+		wait for 6ns;
+		wait until S_AXI_ACLK='1';
+		wait until S_AXI_ACLK='1';
+		wait until S_AXI_ACLK='1';
+		wait until S_AXI_ACLK='1';
+		S_AXI_ARADDR<="11111111111111111111111111111111";
+		S_AXI_ARVALID<='1';
+		wait until S_AXI_ACLK='1'; -- address data and read enable is latched to internal signal
+		S_AXI_ARVALID<='0';
+		wait until S_AXI_ACLK='1'; -- waiting for register to retrieve data
+		wait until S_AXI_ACLK='1'; -- on this clock edge it is simulated that register module sets the acknowledge bit.  read enable and address are reset 
+		read_data<="01010101010101010101010101010101";
+		read_ack<='1';
+		read_resp<= "11";
+		
+		wait until S_AXI_ACLK ='1'; -- at this point valid and rdata and resp should be set to register module returned values.  read enable and read address reset
+		S_AXI_RREADY<='1';--setting master ready to recieve data.  one clock edge later sm switches to idle state.  
+		wait until S_AXI_ACLK ='1'; -- new transaction should be allowed during these clock cycles
+		wait until S_AXI_ACLK ='1'; -- arready back to 1
+		wait until S_AXI_ACLK ='1'; -- can begin new transaction
+		wait until S_AXI_ACLK ='1'; 
+		S_AXI_ARVALID<='1';
+		if S_AXI_ARREADY = '1' then
+			wait until S_AXI_ACLK = '1';
+			S_AXI_ARVALID<='0';
+		end if;
+		--S_AXI_ARESETN<='0'; -- no new transaction should start from here on.  
+		wait;
+	
+	end process;
+	
 end test;
 
 

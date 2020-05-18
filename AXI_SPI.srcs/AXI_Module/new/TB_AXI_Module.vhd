@@ -1,3 +1,5 @@
+
+
 library ieee;
 use ieee.std_logic_1164.all;
 
@@ -190,41 +192,70 @@ begin
 		
 	end process;
 
-	process 
-	begin 
-		wait for 200ns;
-		wait for 6ns;
-		wait until S_AXI_ACLK='1';
-		wait until S_AXI_ACLK='1';
-		wait until S_AXI_ACLK='1';
-		wait until S_AXI_ACLK='1';
-		S_AXI_ARADDR<="11111111111111111111111111111111";
-		S_AXI_ARVALID<='1';
-		wait until S_AXI_ACLK='1'; -- address data and read enable is latched to internal signal
-		S_AXI_ARVALID<='0';
-		wait until S_AXI_ACLK='1'; -- waiting for register to retrieve data
-		wait until S_AXI_ACLK='1'; -- on this clock edge it is simulated that register module sets the acknowledge bit.  read enable and address are reset 
-		read_data<="01010101010101010101010101010101";
-		read_ack<='1';
-		read_resp<= "11";
-		
-		wait until S_AXI_ACLK ='1'; -- at this point valid and rdata and resp should be set to register module returned values.  read enable and read address reset
-		S_AXI_RREADY<='1';--setting master ready to recieve data.  one clock edge later sm switches to idle state.  
-		wait until S_AXI_ACLK ='1'; -- new transaction should be allowed during these clock cycles
-		wait until S_AXI_ACLK ='1'; -- arready back to 1
-		wait until S_AXI_ACLK ='1'; -- can begin new transaction
-		wait until S_AXI_ACLK ='1'; 
-		S_AXI_ARVALID<='1';
-		if S_AXI_ARREADY = '1' then
-			wait until S_AXI_ACLK = '1';
-			S_AXI_ARVALID<='0';
-		end if;
-		--S_AXI_ARESETN<='0'; -- no new transaction should start from here on.  
-		wait;
-	
-	end process;
-	
-end test;
+process 
+begin 
+--setting comparison values for address and data lines
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+S_AXI_ARADDR<="11111111111111111111111111111111";
+read_data<="01010101010101010101010101010101";
 
+----------- READ TEST CASE 1----------------------------------
+-- checking reset functionality with no prior activity 
+-- RT_1
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+assert (S_AXI_ARREADY = '0') and (S_AXI_RVALID='0') and (read_address="00000000000000000000000000000000") and (read_enable='0') 
+report "all outgoing signals not low" severity failure;
+------------- END TEST CASE 1 ---------------------------------
+
+
+------------- READ TEST CASE 2 --------------------------------
+--RT_2, RT_7
+wait until S_AXI_ARESETN<='1';
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+assert S_AXI_ARREADY = '1' report "S_AXI_ARREADY not properly set in idle state" severity failure;
+------------- END TEST CASE 2 ---------------------------------
+
+
+------------- READ TEST CASE 3 --------------------------------
+--RT_3, RT_2, RT_4
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+S_AXI_ARVALID<='1';
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+assert (read_enable='1') and (read_address=S_AXI_ARADDR) and (S_AXI_ARREADY='0') 
+report "state transition did not occur or signals not properly changed" 
+severity failure;
+------------- END TEST CASE 3 --------------------------------
+
+
+------------- READ TEST CASE 4 --------------------------------
+-- RT_8, RT_9, RT_2
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+read_ack<='1';
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+assert (S_AXI_RRESP= read_resp) and (S_AXI_RVALID = '1' ) and (S_AXI_RDATA=read_data) and (read_enable='0') and (read_address="00000000000000000000000000000000")
+report "improper transition or lack of proper signal change" severity failure;
+
+------------- END TEST CASE 4 ---------------------------------
+
+------------- READ TEST CASE 5 --------------------------------
+--RT_6, RT_5, RT_2
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+S_AXI_RREADY <='1';
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+assert (S_AXI_ARREADY ='1') and (S_AXI_RVALID='0')
+report "no proper transition to idle or signal change mistake"
+severity failure;
+------------- END TEST CASE 5 ---------------------------------
+
+end process;
+end test;
 
 

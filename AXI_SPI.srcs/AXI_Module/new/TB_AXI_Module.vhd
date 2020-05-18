@@ -126,28 +126,69 @@ begin
 	
 	process
 	begin
+----------------- WT_1: --------------------------
+	-- This test has to be done visually using
+	-- the simulation waveform because the state
+	-- signal is internal
+	-- Set 'S_AXI_ARESETN' = '0' and check that wstate = idle
 		wait until S_AXI_ARESETN = '1';
+		
+----------------- WT_2: --------------------------
+	-- Prepare address and data on the write address and data channels
+	-- This test case tests if 'S_AXI_AWREADY' becomes '0' after 
+	-- 'S_AXI_AWVALID' is '1'
+	
 		wait until S_AXI_ACLK = '0';
-		S_AXI_AWADDR <= X"A000000A";
-		S_AXI_WDATA <= X"000FF000";
+		S_AXI_AWADDR <= X"A000000A";	-- preparing arbitrary test address
+		S_AXI_WDATA <= X"000FF000";		-- preparing arbitrary test data
 		S_AXI_AWVALID <= '0';
 		S_AXI_WVALID <= '0';
 		S_AXI_BREADY <= '0';
 		
 		wait for 30 ns;
 		
-		S_AXI_WVALID <= '1';
-		wait until S_AXI_AWREADY = '1' and S_AXI_ACLK = '1';
-		S_AXI_WVALID <= '0';
-		S_AXI_AWVALID <= '1';
-		wait until S_AXI_ACLK = '1';
+		S_AXI_AWVALID <= '1';			-- write address is valid
+		wait until S_AXI_AWREADY = '1' and S_AXI_AWVALID = '1' and rising_edge(S_AXI_ACLK);	-- conditions for WT_2
+		wait for 1 ns;
 		S_AXI_AWVALID <= '0';
+		assert S_AXI_AWREADY = '0'		-- check that 'S_AXI_AWREADY' = '0'
+		report "WT_2 failed: S_AXI_AWREADY /= '0'"
+		severity warning;
+		
+----------------- WT_3: --------------------------
+		-- This test case tests if 'S_AXI_WREADY' becomes '0' after 
+		-- 'S_AXI_WVALID' is '1'
+		
+		S_AXI_WVALID <= '1';			-- write data is valid
+		wait until S_AXI_WREADY = '1' and S_AXI_WVALID = '1' and rising_edge(S_AXI_ACLK);	-- conditions for WT_3
+		wait for 1 ns;
+		S_AXI_WVALID <= '0';
+		assert S_AXI_WREADY = '0'		-- check that 'S_AXI_WREADY' = '0'
+		report "WT_3 failed: S_AXI_WREADY /= '0'"
+		severity warning;
+		
+----------------- WT_4: --------------------------
+		-- This test case checks that the data and address info have been
+		-- passed through to the internal register module
+		
 		wait until S_AXI_ACLk = '0';
-		IntRdy <= '1';
---		wait for 30 ns;
+		IntRdy <= '1';					-- indicates that the register module is ready to receive new data
+		wait until wrequest = '1';		-- requests writing the data to the register
+		wait until S_AXI_ACLK = '1';	
+		assert INTWDATA = S_AXI_WDATA	-- check if the data has been passed through
+		report "WT_4 failed: WDATA not latched"
+		severity warning;
+		
+----------------- WT_5: --------------------------
+		-- This test case tests if 'S_AXI_BVALID' becomes '0' after 
+		-- 'S_AXI_BREADY' is '1'
+		
 		S_AXI_BREADY <= '1';
-		wait for 45 ns;
+		wait until S_AXI_BREADY = '1' and S_AXI_BVALID = '1' and rising_edge(S_AXI_ACLK);	-- conditions for WT_5
 		S_AXI_BREADY <= '0';
+		assert S_AXI_BVALID = '0'		-- check that 'S_AXI_BVALID' = '0'
+		report "WT_5 failed: S_AXI_BVALID /= '0'"
+		severity warning;
 		
 	end process;
 

@@ -25,4 +25,7 @@ port(
 end SPI_Module;
 
 architecture behaviour of SPI_Module is
+ 
 begin
+
+end behaviour;

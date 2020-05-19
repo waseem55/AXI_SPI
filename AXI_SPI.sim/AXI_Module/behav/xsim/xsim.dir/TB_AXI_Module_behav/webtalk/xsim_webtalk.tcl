@@ -1,6 +1,6 @@
 webtalk_init -webtalk_dir D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.sim/AXI_Module/behav/xsim/xsim.dir/TB_AXI_Module_behav/webtalk/
 webtalk_register_client -client project
-webtalk_add_data -client project -key date_generated -value "Tue May 19 10:54:45 2020" -context "software_version_and_target_device"
+webtalk_add_data -client project -key date_generated -value "Tue May 19 15:50:02 2020" -context "software_version_and_target_device"
 webtalk_add_data -client project -key product_version -value "XSIM v2019.2.1 (64-bit)" -context "software_version_and_target_device"
 webtalk_add_data -client project -key build_version -value "2729669" -context "software_version_and_target_device"
 webtalk_add_data -client project -key os_platform -value "WIN64" -context "software_version_and_target_device"
@@ -14,7 +14,7 @@ webtalk_add_data -client project -key target_package -value "not_applicable" -co
 webtalk_add_data -client project -key target_speed -value "not_applicable" -context "software_version_and_target_device"
 webtalk_add_data -client project -key random_id -value "43682144-5e58-4a42-981c-7d368d9215d0" -context "software_version_and_target_device"
 webtalk_add_data -client project -key project_id -value "d8f9a90ca5a94e3d9165f2f764a0909e" -context "software_version_and_target_device"
-webtalk_add_data -client project -key project_iteration -value "102" -context "software_version_and_target_device"
+webtalk_add_data -client project -key project_iteration -value "104" -context "software_version_and_target_device"
 webtalk_add_data -client project -key os_name -value "Windows Server 2016 or Windows 10" -context "user_environment"
 webtalk_add_data -client project -key os_release -value "major release  (build 9200)" -context "user_environment"
 webtalk_add_data -client project -key cpu_name -value "Intel(R) Core(TM) i5-7300HQ CPU @ 2.50GHz" -context "user_environment"
@@ -26,7 +26,7 @@ webtalk_add_data -client xsim -key Command -value "xsim" -context "xsim\\command
 webtalk_add_data -client xsim -key trace_waveform -value "true" -context "xsim\\usage"
 webtalk_add_data -client xsim -key runtime -value "1 us" -context "xsim\\usage"
 webtalk_add_data -client xsim -key iteration -value "1" -context "xsim\\usage"
-webtalk_add_data -client xsim -key Simulation_Time -value "0.12_sec" -context "xsim\\usage"
-webtalk_add_data -client xsim -key Simulation_Memory -value "5896_KB" -context "xsim\\usage"
-webtalk_transmit -clientid 96761601 -regid "" -xml D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.sim/AXI_Module/behav/xsim/xsim.dir/TB_AXI_Module_behav/webtalk/usage_statistics_ext_xsim.xml -html D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.sim/AXI_Module/behav/xsim/xsim.dir/TB_AXI_Module_behav/webtalk/usage_statistics_ext_xsim.html -wdm D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.sim/AXI_Module/behav/xsim/xsim.dir/TB_AXI_Module_behav/webtalk/usage_statistics_ext_xsim.wdm -intro "<H3>XSIM Usage Report</H3><BR>"
+webtalk_add_data -client xsim -key Simulation_Time -value "0.01_sec" -context "xsim\\usage"
+webtalk_add_data -client xsim -key Simulation_Memory -value "5940_KB" -context "xsim\\usage"
+webtalk_transmit -clientid 2148295212 -regid "" -xml D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.sim/AXI_Module/behav/xsim/xsim.dir/TB_AXI_Module_behav/webtalk/usage_statistics_ext_xsim.xml -html D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.sim/AXI_Module/behav/xsim/xsim.dir/TB_AXI_Module_behav/webtalk/usage_statistics_ext_xsim.html -wdm D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.sim/AXI_Module/behav/xsim/xsim.dir/TB_AXI_Module_behav/webtalk/usage_statistics_ext_xsim.wdm -intro "<H3>XSIM Usage Report</H3><BR>"
 webtalk_terminate

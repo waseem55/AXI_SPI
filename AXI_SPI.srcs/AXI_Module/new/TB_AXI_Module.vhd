@@ -192,70 +192,74 @@ begin
 		
 	end process;
 
-process 
-begin 
---setting comparison values for address and data lines
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-S_AXI_ARADDR<="11111111111111111111111111111111";
-read_data<="01010101010101010101010101010101";
-
+	process 
+	begin 
+		--setting comparison values for address and data lines
+		wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+		S_AXI_ARADDR<="11111111111111111111111111111111";
+		read_data<="01010101010101010101010101010101";
+		
 ----------- READ TEST CASE 1----------------------------------
--- checking reset functionality with no prior activity 
--- RT_1
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-assert (S_AXI_ARREADY = '0') and (S_AXI_RVALID='0') and (read_address="00000000000000000000000000000000") and (read_enable='0') 
-report "all outgoing signals not low" severity failure;
+		-- checking reset functionality with no prior activity 
+		-- RT_1
+		wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+		read_data <= "11000000000000000000000000000000";
+		assert (S_AXI_ARREADY = '0') and (S_AXI_RVALID='0') and (read_address="00000000000000000000000000000000") and (read_enable='0') 
+		report "all outgoing signals not low" severity failure;
 ------------- END TEST CASE 1 ---------------------------------
-
-
+		
+		
 ------------- READ TEST CASE 2 --------------------------------
---RT_2, RT_7
-wait until S_AXI_ARESETN<='1';
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-assert S_AXI_ARREADY = '1' report "S_AXI_ARREADY not properly set in idle state" severity failure;
+		--RT_2, RT_7
+		wait until S_AXI_ARESETN<='1';
+		wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+		wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+		assert S_AXI_ARREADY = '1' report "S_AXI_ARREADY not properly set in idle state" severity failure;
 ------------- END TEST CASE 2 ---------------------------------
-
-
+		
+		
 ------------- READ TEST CASE 3 --------------------------------
---RT_3, RT_2, RT_4
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-S_AXI_ARVALID<='1';
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-assert (read_enable='1') and (read_address=S_AXI_ARADDR) and (S_AXI_ARREADY='0') 
-report "state transition did not occur or signals not properly changed" 
-severity failure;
+		--RT_3, RT_2, RT_4
+		wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+		wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+		S_AXI_ARVALID<='1';
+		wait until rising_edge(S_AXI_ACLK) and S_AXI_ARVALID = '1' and S_AXI_ARREADY = '1';
+		wait for 1 ns;
+		S_AXI_ARVALID <= '0';
+		assert (read_enable='1') and (read_address=S_AXI_ARADDR) and (S_AXI_ARREADY='0') 
+		report "state transition did not occur or signals not properly changed" 
+		severity failure;
 ------------- END TEST CASE 3 --------------------------------
-
-
+		
+		
 ------------- READ TEST CASE 4 --------------------------------
--- RT_8, RT_9, RT_2
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-read_ack<='1';
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-assert (S_AXI_RRESP= read_resp) and (S_AXI_RVALID = '1' ) and (S_AXI_RDATA=read_data) and (read_enable='0') and (read_address="00000000000000000000000000000000")
-report "improper transition or lack of proper signal change" severity failure;
-
+		-- RT_8, RT_9, RT_2
+		wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+		wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+		read_ack<='1';
+		wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+		wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+		assert (S_AXI_RRESP= read_resp) and (S_AXI_RVALID = '1' ) and (S_AXI_RDATA=read_data) and (read_enable='0') and (read_address="00000000000000000000000000000000")
+		report "improper transition or lack of proper signal change" severity failure;
+		
 ------------- END TEST CASE 4 ---------------------------------
-
+		
 ------------- READ TEST CASE 5 --------------------------------
---RT_6, RT_5, RT_2
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-S_AXI_RREADY <='1';
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
-assert (S_AXI_ARREADY ='1') and (S_AXI_RVALID='0')
-report "no proper transition to idle or signal change mistake"
-severity failure;
+		--RT_6, RT_5, RT_2
+		wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+		wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+		S_AXI_RREADY <='1';
+		wait until rising_edge(S_AXI_ACLK) and S_AXI_RVALID = '1' and S_AXI_RREADY = '1';
+		wait for 1 ns;
+		S_AXI_RREADY <= '0';
+		wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+		wait until S_AXI_ACLK'event and S_AXI_ACLK='1';
+		assert (S_AXI_ARREADY ='1') and (S_AXI_RVALID='0')
+		report "no proper transition to idle or signal change mistake"
+		severity failure;
 ------------- END TEST CASE 5 ---------------------------------
-
-end process;
+		wait;
+	end process;
 end test;
 
 

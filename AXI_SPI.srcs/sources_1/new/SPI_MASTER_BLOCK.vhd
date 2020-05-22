@@ -46,7 +46,11 @@ entity Master_Block is
 			load_new_data: inout std_logic;
 			
 			--data valid pulse from the Tx_FIFO
-			TX_Valid: in std_logic
+			TX_Valid: in std_logic;
+			
+			-- Master signal for telling SW it is ready for new data and a new transaction to be started 
+			Initiate_New: out std_logic 
+			
 			
 			);
 	
@@ -54,21 +58,21 @@ end Master_Block;
 
 architecture behavioral of Master_Block is
 
-signal TX_Buffer: std_logic_vector((C_NUM_TRANSFER_BITS-1) downto 0);
-signal RX_Buffer: std_logic_vector((C_NUM_TRANSFER_BITS-1) downto 0);
-signal begin_transaction: std_logic;
-signal t_count: integer;
-signal r_count: integer;
-signal transfer_mode: std_logic;
-signal LSB_or_MSB_Internal: std_logic;
-signal initialized: std_logic;
-signal SPI_CLK_COUNT: integer;
-signal SPI_CLK_EDGES: integer;
-signal reset_count: std_logic;
-signal rising: std_logic;
-signal SPI_CLK: std_logic;
-signal wait_count: integer;
-signal load_transaction: std_logic;
+signal TX_Buffer: std_logic_vector((C_NUM_TRANSFER_BITS-1) downto 0); -- internal buffer used to take in FIFO data
+signal RX_Buffer: std_logic_vector((C_NUM_TRANSFER_BITS-1) downto 0); -- second internal buffer for collecting data from slave
+signal begin_transaction: std_logic; -- flag for pushing control flow to next process
+signal t_count: integer; -- counter for access TX_Buffer 
+signal r_count: integer; -- counter for accessing RX_Buffer
+signal transfer_mode: std_logic; -- latched signal for Manual or Auto designation
+signal LSB_or_MSB_Internal: std_logic; -- latched signal to make a transaction LSB or MSB style
+signal initialized: std_logic; -- another control flow flag 
+signal SPI_CLK_COUNT: integer; -- counter for determining spi edges 
+signal SPI_CLK_EDGES: integer; -- 32 spi edges per transaction
+signal reset_count: std_logic; -- to prevent load_new_data for getting set unecessarilly during other processes 
+signal rising: std_logic; -- indicates if edge is rising or falling 
+signal SPI_CLK: std_logic; -- internal signal for toggling SCK_O that it is attached to via buffer
+signal wait_count: integer; -- creates a 6 cycle wait period after inhibit or end of transaction 
+signal load_transaction: std_logic; -- when high new data may be loaded and subsequently a new transaction
 
 begin 
 process (S_AXI_ACLK, RESETN)
@@ -362,12 +366,12 @@ process(S_AXI_ACLK)
 begin 
 if rising_edge(S_AXI_ACLK) then 
 	if load_new_data = '1' and wait_count = 6 then 
-		load_transaction<='1';
+		load_transaction<='1'; 
 	end if;
 end if;
 end process;
 
-
+Initiate_New<=load_transaction;
 SCK_O<=SPI_CLK; -- connects the SPI_CLK from the data transmit and receive process directly to the output.  
 
 end behavioral;

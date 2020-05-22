@@ -1,0 +1,2 @@
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/AXI_SPI.srcs/sources_1/new/SPI_MASTER_BLOCK.vhd" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'Master_Block'

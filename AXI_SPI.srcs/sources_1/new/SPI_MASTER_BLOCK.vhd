@@ -3,8 +3,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 entity Master_Block is
-	generic (C_NUM_TRANSFER_BITS: integer; -- sets expected number of bits in a transfer and size of shift register
-			C_NUM_SS_BITS: integer); -- size of slave select output
+
+	generic (C_NUM_TRANSFER_BITS: integer :=32; -- sets expected number of bits in a transfer and size of shift register
+			C_NUM_SS_BITS: integer := 32); -- size of slave select output
 	
 	
 	
@@ -88,6 +89,8 @@ if RESETN = '0' then
 	MOSI_T<='1';
 	reset_count<='0';
 	wait_count<=6;
+	load_transaction<='0';
+	Initiate_New<='0';
 elsif rising_edge(S_AXI_ACLK) then 
 
 ------------------------------------------------------------------------------------------------------------

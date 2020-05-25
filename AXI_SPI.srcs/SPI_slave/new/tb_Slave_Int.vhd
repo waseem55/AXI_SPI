@@ -64,12 +64,14 @@ begin
 	wait until i_RESETN = '1';
 	wait until i_CLK = '1';
 	wait until i_CLK = '0';
-	
+
 	i_TX_DATA <= X"f0";
 	i_TX_DV <= '1';
 	wait until i_CLK = '1';
 	i_TX_DV <= '0';
 	
+	wait until i_CLK = '0';
+	wait until i_CLK = '1';
 	wait until i_CLK = '0';
 	wait until i_CLK = '1';
 	

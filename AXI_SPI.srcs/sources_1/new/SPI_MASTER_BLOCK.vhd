@@ -39,14 +39,14 @@ entity Master_Block is
 			SS_O: out std_logic_vector(C_NUM_SS_BITS-1 downto 0);
 			
 			--SCK pulse output
-			SCK_O: out std_logic; 
+			SCK_O: inout std_logic; 
 			
 			-- signals master is ready for SW to start a new transaction
-			ready_for_transaction: out std_logic;
+			ready_for_transaction: inout std_logic;
 			
 			
 			--data valid pulse from the Tx_FIFO
-			TX_Valid: in std_logic;
+			TX_Valid: in std_logic
 		
 			
 			);
@@ -64,6 +64,9 @@ signal slave_select_style: std_logic;
 signal t_count: integer;
 signal r_count: integer;
 signal count: integer;
+signal rising: std_logic;
+signal SPI_CLK_COUNT: integer;
+signal SPI_CLK_EDGES: integer;
 
 begin 
 
@@ -83,6 +86,7 @@ TX_BUFFER<=(others=>'0');
 count<=0;
 transaction_style<='0';
 slave_select_style<='1';
+rising<='1';
 
 elsif rising_edge(S_AXI_ACLK) then 
 	case(state) is
@@ -108,8 +112,8 @@ elsif rising_edge(S_AXI_ACLK) then
 				state<=begin_transaction;
 			end if;
 			
-		when begin_transaction 
-			if ready_for_transaction = '1' and Master_Inhibit = '0' and Master_or_Slave = '1' and SPE = '1' and TX_Valid ='1' then 
+		when begin_transaction => 
+			if (ready_for_transaction = '1' and Master_Inhibit = '0') and Master_or_Slave = '1' and (SPE = '1' and TX_Valid ='1') then 
 				MOSI_T<='0';
 				TX_BUFFER<=Data_In_Parallel;
 				state<=initialize;
@@ -131,7 +135,7 @@ elsif rising_edge(S_AXI_ACLK) then
 				SS_O<=SSR;
 			end if;
 			
-		when initialize 
+		when initialize =>
 			if transaction_style = '1' and Master_Inhibit = '0' then 
 				MOSI_O<=TX_BUFFER(t_count);
 				t_count<=t_count+1;
@@ -153,11 +157,11 @@ elsif rising_edge(S_AXI_ACLK) then
 				count<=0;
 			end if;
 		
-		when transmit_receive 
+		when transmit_receive =>
 			if Master_Inhibit = '0' then 
 				if SPI_CLK_EDGES>0 then 
 					if SPI_CLK_COUNT = 3 then 
-						SCK_O<= not SCK_O;
+						SCK_O <= not SCK_O;
 						SPI_CLK_EDGES<=SPI_CLK_EDGES-1;
 						SPI_CLK_COUNT<=0;
 						rising<=not rising;
@@ -228,10 +232,10 @@ elsif rising_edge(S_AXI_ACLK) then
 				
 			end if;
 			
-		when delay 
-			if count<6;
+		when delay => 
+			if count<6 then
 				count<=count+1;
-			elsif count =6;
+			elsif count =6 then 
 				count<=0;
 				state<=idle;
 			end if;

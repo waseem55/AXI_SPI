@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Webtalk v2019.2.1 (64-bit)
+# SW Build 2729669 on Thu Dec  5 04:49:17 MST 2019
+# IP Build 2729494 on Thu Dec  5 07:38:25 MST 2019
+# Start of session at: Fri May 22 14:11:16 2020
+# Process ID: 19904
+# Current directory: D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.sim/SPI_slave/behav/xsim
+# Command line: wbtcv.exe -mode batch -source D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.sim/SPI_slave/behav/xsim/xsim.dir/AXI_Module_behav/webtalk/xsim_webtalk.tcl -notrace
+# Log file: D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.sim/SPI_slave/behav/xsim/webtalk.log
+# Journal file: D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.sim/SPI_slave/behav/xsim\webtalk.jou
+#-----------------------------------------------------------
+source D:/My -notrace

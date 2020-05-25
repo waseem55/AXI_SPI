@@ -31,7 +31,7 @@
     <Option Name="IPUserFilesDir" Val="$PIPUSERFILESDIR"/>
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
-    <Option Name="WTXSimLaunchSim" Val="153"/>
+    <Option Name="WTXSimLaunchSim" Val="154"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -83,7 +83,6 @@
       <File Path="$PSRCDIR/sources_1/new/SPI_Module.vhd">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
-          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
@@ -146,9 +145,9 @@
       </Config>
     </FileSet>
     <FileSet Name="SPI_MASTER" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/SPI_MASTER">
+      <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/sim_1/new/SPI_MASTER_BLOCK_TEST_BENCH.vhd">
         <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>

@@ -48,7 +48,6 @@ entity Master_Block is
 			--data valid pulse from the Tx_FIFO
 			TX_Valid: in std_logic
 		
-			
 			);
 	
 end Master_Block;
@@ -89,7 +88,7 @@ slave_select_style<='1';
 rising<='1';
 SPI_CLK_EDGES<=0;
 SPI_CLK_COUNT<=0;
-
+state<=idle;
 elsif rising_edge(S_AXI_ACLK) then 
 	case(state) is
 		when idle => 

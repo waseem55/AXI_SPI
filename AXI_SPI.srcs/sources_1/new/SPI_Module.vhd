@@ -3,9 +3,9 @@ use ieee.std_logic_1164.all;
 
 entity SPI_Module is
 generic(
-	C_SCK_RATIO			: integer;
-	C_NUM_SS_BITS		: integer;
-	C_NUM_TRANSFER_BItS	: integer
+	C_SCK_RATIO			: integer := 32;
+	C_NUM_SS_BITS		: integer := 1;
+	C_NUM_TRANSFER_BItS	: integer := 8
 	);
 port(
 	SCK_I				: in std_logic;

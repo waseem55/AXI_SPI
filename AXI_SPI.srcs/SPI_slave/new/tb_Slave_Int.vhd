@@ -32,7 +32,7 @@ end component;
 
 signal i_CLK	: std_logic := '0';
 signal i_RESETN	: std_logic := '0';
-signal i_LSB_first : std_logic := '0';
+signal i_LSB_first : std_logic := '1';
 	
 	-- TX (MISO) ports
 signal i_TX_DATA	: std_logic_vector(7 downto 0);

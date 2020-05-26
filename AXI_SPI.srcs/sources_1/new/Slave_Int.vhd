@@ -28,14 +28,11 @@ port(
 end slave_int;
 
 architecture RTL of slave_Int is
-
-	signal done 			: std_logic;
+	
 	signal cnt_dn, t_TX_READY: std_logic;
 	
-	signal shift			: std_logic_vector(C_NUM_TRANSFER_BITS-1 downto 0);
 	signal buff_out			: std_logic_vector(C_NUM_TRANSFER_BITS-1 downto 0);	-- buff_out is MISO buffer, buff is temp storage for TX
 	signal counter			: integer range 0 to C_NUM_TRANSFER_BITS-1;
-	signal prepare_counter	: integer range 0 to 6;
 	
 	type mystate is (idle, active, transmit);
 	signal state : mystate;
@@ -86,8 +83,12 @@ begin
 			o_RX_DV <= '0';
 		else
 			o_RX_DV <= '0';
-			if rising_edge(i_SPI_CLK) then 
-				o_RX_DATA(counter) <= i_SPI_MOSI;
+			if rising_edge(i_SPI_CLK) then
+				if i_LSB_first = '0' then 
+					o_RX_DATA(counter) <= i_SPI_MOSI;
+				else
+					o_RX_DATA(C_NUM_TRANSFER_BITS-1 - counter) <= i_SPI_MOSI;
+				end if;
 				if counter = 0 then
 					counter <= C_NUM_TRANSFER_BITS-1;
 					o_RX_DV <= '1';
@@ -104,10 +105,18 @@ begin
  	if i_RESETN = '0' then
  		o_SPI_MISO <= '0';
  	elsif i_SPI_SPISEL = '1' then
- 		o_SPI_MISO <= buff_out(C_NUM_TRANSFER_BITS-1);
+ 		if i_LSB_first = '0' then
+ 			o_SPI_MISO <= buff_out(C_NUM_TRANSFER_BITS-1);
+ 		else
+ 			o_SPI_MISO <= buff_out(0);
+ 		end if;
  	else
  		if falling_edge(i_SPI_CLK) then
- 			o_SPI_MISO <= buff_out(counter);
+ 			if i_LSB_first = '0' then
+ 				o_SPI_MISO <= buff_out(counter);
+ 			else
+ 				o_SPI_MISO <= buff_out(C_NUM_TRANSFER_BITS-1 - counter);
+ 			end if;
  		end if;
  	end if;
 end process;	

@@ -87,6 +87,8 @@ count<=0;
 transaction_style<='0';
 slave_select_style<='1';
 rising<='1';
+SPI_CLK_EDGES<=0;
+SPI_CLK_COUNT<=0;
 
 elsif rising_edge(S_AXI_ACLK) then 
 	case(state) is
@@ -105,7 +107,8 @@ elsif rising_edge(S_AXI_ACLK) then
 				count<=0;
 				transaction_style<='0';
 				slave_select_style<='1';
-				
+				SPI_CLK_EDGES<=0;
+                SPI_CLK_COUNT<=0;
 				
 			elsif RESETN ='1' then 
 				ready_for_transaction <='1';
@@ -142,13 +145,13 @@ elsif rising_edge(S_AXI_ACLK) then
 				SCK_O<='0';
 				rising<='1';
 				SPI_CLK_COUNT<=0;
-				SPI_CLK_EDGES <=31;
+				SPI_CLK_EDGES <=C_NUM_TRANSFER_BITS -1;
 				state<=transmit_receive;
 			elsif transaction_style = '0'  and Master_Inhibit = '0'  then 
 				SCK_O<='0';
 				rising<='1';
 				SPI_CLK_COUNT<=0;
-				SPI_CLK_EDGES <=31;
+				SPI_CLK_EDGES <=C_NUM_TRANSFER_BITS -1;
 				MOSI_O<=TX_BUFFER(t_count);
 				t_count<=t_count-1;
 				state<=transmit_receive;

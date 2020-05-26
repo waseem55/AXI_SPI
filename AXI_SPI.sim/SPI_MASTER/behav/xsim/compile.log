@@ -1,0 +1,8 @@
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/AXI_SPI.srcs/sources_1/new/SPI_MASTER_BLOCK.vhd" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'Master_Block'
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/AXI_SPI.srcs/sim_1/new/SPI_MASTER_BLOCK_TEST_BENCH.vhd" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'TB_AXI_Module'
+ERROR: [VRFC 10-2033] argument of operator "=" cannot be an OTHERS aggregate [C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/AXI_SPI.srcs/sim_1/new/SPI_MASTER_BLOCK_TEST_BENCH.vhd:124]
+ERROR: [VRFC 10-2033] argument of operator "/=" cannot be an OTHERS aggregate [C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/AXI_SPI.srcs/sim_1/new/SPI_MASTER_BLOCK_TEST_BENCH.vhd:138]
+ERROR: [VRFC 10-3782] unit 'test' ignored due to previous errors [C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/AXI_SPI.srcs/sim_1/new/SPI_MASTER_BLOCK_TEST_BENCH.vhd:27]
+INFO: [VRFC 10-3070] VHDL file 'C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/AXI_SPI.srcs/sim_1/new/SPI_MASTER_BLOCK_TEST_BENCH.vhd' ignored due to errors

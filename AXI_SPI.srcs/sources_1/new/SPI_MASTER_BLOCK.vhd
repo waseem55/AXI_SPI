@@ -108,7 +108,7 @@ elsif rising_edge(S_AXI_ACLK) then
 				slave_select_style<='1';
 				SPI_CLK_EDGES<=0;
                 SPI_CLK_COUNT<=0;
-				
+				state<=idle;
 			elsif RESETN ='1' then 
 				ready_for_transaction <='1';
 				state<=begin_transaction;

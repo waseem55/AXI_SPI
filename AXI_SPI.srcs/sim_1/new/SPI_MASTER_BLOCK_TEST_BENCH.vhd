@@ -21,10 +21,10 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity TB_AXI_Module is
-end TB_AXI_Module;
+entity SPI_MASTER_BLOCK_TEST_BENCH is
+end SPI_MASTER_BLOCK_TEST_BENCH;
 
-architecture Test of TB_AXI_Module is
+architecture Test of SPI_MASTER_BLOCK_TEST_BENCH is
 
 component Master_Block
 	generic (C_NUM_TRANSFER_BITS: integer; -- sets expected number of bits in a transfer and size of shift register

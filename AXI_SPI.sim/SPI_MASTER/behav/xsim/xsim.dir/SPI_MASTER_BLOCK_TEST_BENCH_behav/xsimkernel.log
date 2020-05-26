@@ -1,0 +1,7 @@
+Running: xsim.dir/SPI_MASTER_BLOCK_TEST_BENCH_behav/xsimk.exe -simmode gui -wdb SPI_MASTER_BLOCK_TEST_BENCH_behav.wdb -simrunnum 0 -socket 60515
+Design successfully loaded
+Design Loading Memory Usage: 5232 KB (Peak: 5232 KB)
+Design Loading CPU Usage: 15 ms
+Simulation completed
+Simulation Memory Usage: 5664 KB (Peak: 5664 KB)
+Simulation CPU Usage: 15 ms

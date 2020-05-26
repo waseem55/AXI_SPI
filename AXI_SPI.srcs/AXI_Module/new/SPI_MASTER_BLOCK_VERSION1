@@ -1,0 +1,22 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity Master_Block is
+	port (	S_AXI_ACLK: in std_logic;
+			S_AXI_ARESETN: in std_logic;
+			
+			
+			
+			
+			
+			
+			
+			
+			);
+	
+end Master_Block;
+
+architecture behavioral of Master_Block is
+begin 
+
+end behavioral;

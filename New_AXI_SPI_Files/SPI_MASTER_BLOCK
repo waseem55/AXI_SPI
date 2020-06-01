@@ -33,7 +33,7 @@ entity Master_Block is
 			SSR: in std_logic_vector(31 downto 0);
 			
 			-- tri-state enable output for multi-master bus arbitration and preventing errors in slave mode
-			MOSI_T: inout std_logic;
+--			MOSI_T: inout std_logic;
 			
 			-- slave select line output 
 			SS_O: out std_logic_vector(C_NUM_SS_BITS-1 downto 0);
@@ -51,13 +51,9 @@ entity Master_Block is
 			write_enable: out std_logic;
 			
 			--data valid pulse from the Tx_FIFO
-			TX_Valid: in std_logic;
-		    
-		    --clock tristate
-		    SCK_T: out std_logic;
+			TX_Valid: in std_logic
+		
 			
-			--slave select tri state
-			SS_T: out std_logic
 			);
 	
 end Master_Block;
@@ -84,7 +80,6 @@ begin
 if RESETN = '0' then 
 t_count<=0;
 r_count<=0;
-MOSI_T<='1';
 SS_O<=(others=>'1');
 MOSI_O<='0';
 Data_Out_Parallel<=(others=>'0');
@@ -100,15 +95,12 @@ SPI_CLK_EDGES<=0;
 SPI_CLK_COUNT<=0;
 read_enable<='0';
 write_enable<='0';
-SCK_T<='1';
-SS_T<='1';
 elsif rising_edge(S_AXI_ACLK) then 
 	case(state) is
 		when idle => 
 			if RESETN = '0' then 
 				t_count<=0;
 				r_count<=0;
-				MOSI_T<='1';
 				SS_O<=(others=>'1');
 				MOSI_O<='0';
 				Data_Out_Parallel<=(others=>'0');
@@ -122,21 +114,13 @@ elsif rising_edge(S_AXI_ACLK) then
 				SPI_CLK_EDGES<=0;
                 SPI_CLK_COUNT<=0;
 				read_enable<='0';
-				SCK_T<='1';
-				SS_T<='1';
 			elsif RESETN ='1' then 
 				ready_for_transaction <='1';
 				state<=begin_transaction;
-				SCK_T<='1';
-				SS_T<='1';
 			end if;
 			
 		when begin_transaction => 
-		    SCK_T<='1';
 			if (ready_for_transaction = '1' and Master_Inhibit = '0') and Master_or_Slave = '1' and (SPE = '1' and TX_Valid ='1') then 
-				MOSI_T<='0';
-				SCK_T<='0';
-				SS_T<='0';
 				--TX_BUFFER<=Data_In_Parallel;
 				read_enable<='1';
 				state<=read_enable_recognize;
@@ -171,7 +155,7 @@ elsif rising_edge(S_AXI_ACLK) then
 				SCK_O<='0';
 				rising<='1';
 				SPI_CLK_COUNT<=0;
-				SPI_CLK_EDGES <=(2 * C_NUM_TRANSFER_BITS) -1;
+				SPI_CLK_EDGES <= (2 * C_NUM_TRANSFER_BITS) -1;
 				state<=transmit_receive;
 			elsif transaction_style = '0'  and Master_Inhibit = '0'  then 
 				SCK_O<='0';
@@ -244,8 +228,6 @@ elsif rising_edge(S_AXI_ACLK) then
 					SS_O<=(others=>'1');
 					Data_Out_Parallel<=RX_Buffer;
 					write_enable<='1';
-					MOSI_T<='1';
-					SCK_T<='1';
 					state<=delay;
 					count<=0;
 				elsif SPI_CLK_EDGES = 0 and slave_select_style = '1' then 
@@ -253,8 +235,6 @@ elsif rising_edge(S_AXI_ACLK) then
 					SCK_O <= not SCK_O;	
 					Data_Out_Parallel<=RX_Buffer;
 					write_enable<='1';
-					MOSI_T<='1';
-					SCK_T<='1';
 					state<=delay;
 					count<=0;
 				end if;

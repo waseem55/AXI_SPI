@@ -1,6 +1,6 @@
 Vivado Simulator 2019.2
 Copyright 1986-1999, 2001-2019 Xilinx, Inc. All Rights Reserved.
-Running: C:/Xilinx/Vivado/2019.2/bin/unwrapped/win64.o/xelab.exe -wto d8f9a90ca5a94e3d9165f2f764a0909e --incr --debug typical --relax --mt 2 -L xil_defaultlib -L secureip --snapshot TB_AXI_Module_behav xil_defaultlib.TB_AXI_Module -log elaborate.log 
+Running: C:/Xilinx/Vivado/2019.2/bin/unwrapped/win64.o/xelab.exe -wto d8f9a90ca5a94e3d9165f2f764a0909e --incr --debug typical --relax --mt 2 -L xil_defaultlib -L secureip --snapshot tb_SPI_behav xil_defaultlib.tb_SPI -log elaborate.log 
 Using 2 slave threads.
 Starting static elaboration
 Completed static elaboration
@@ -10,6 +10,10 @@ Time Resolution for simulation is 1ps
 Compiling package std.standard
 Compiling package std.textio
 Compiling package ieee.std_logic_1164
-Compiling architecture behavioral of entity xil_defaultlib.Master_Block [master_block_default]
-Compiling architecture test of entity xil_defaultlib.tb_axi_module
-Built simulation snapshot TB_AXI_Module_behav
+Compiling package ieee.numeric_std
+Compiling package xil_defaultlib.component_pckg
+Compiling architecture behavioral of entity xil_defaultlib.Master_Block [\Master_Block(c_num_ss_bits=1)\]
+Compiling architecture same_communication of entity xil_defaultlib.Slave_Block [slave_block_default]
+Compiling architecture behaviour of entity xil_defaultlib.SPI_Module [\SPI_Module(c_sck_ratio=32)\]
+Compiling architecture test of entity xil_defaultlib.tb_spi
+Built simulation snapshot tb_SPI_behav

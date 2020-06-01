@@ -3,8 +3,8 @@ use ieee.std_logic_1164.all;
 
 entity Master_Block is
 
-	generic (C_NUM_TRANSFER_BITS: integer :=32; -- sets expected number of bits in a transfer and size of shift register
-			C_NUM_SS_BITS: integer := 32); -- size of slave select output
+	generic (C_NUM_TRANSFER_BITS: integer :=8; -- sets expected number of bits in a transfer and size of shift register
+			C_NUM_SS_BITS: integer := 8); -- size of slave select output
 	
 	
 	
@@ -44,16 +44,26 @@ entity Master_Block is
 			-- signals master is ready for SW to start a new transaction
 			ready_for_transaction: inout std_logic;
 			
+			--read_enable for TX_FIFO
+			read_enable: out std_logic;
+			
+			--write_enable for RX_FIFO
+			write_enable: out std_logic;
 			
 			--data valid pulse from the Tx_FIFO
-			TX_Valid: in std_logic
-		
+			TX_Valid: in std_logic;
+		    
+		    --clock tristate
+		    SCK_T: out std_logic;
+			
+			--slave select tri state
+			SS_T: out std_logic
 			);
 	
 end Master_Block;
 
 architecture behavioral of Master_Block is
-type state_type is (idle,begin_transaction,initialize,transmit_receive, delay); --state machine
+type state_type is (idle,begin_transaction,read_enable_recognize, read_data_from_line, initialize,transmit_receive, delay); --state machine
 signal state : state_type;
 
 signal TX_BUFFER: std_logic_vector(C_NUM_TRANSFER_BITS-1 downto 0);
@@ -88,7 +98,10 @@ slave_select_style<='1';
 rising<='1';
 SPI_CLK_EDGES<=0;
 SPI_CLK_COUNT<=0;
-state<=idle;
+read_enable<='0';
+write_enable<='0';
+SCK_T<='1';
+SS_T<='1';
 elsif rising_edge(S_AXI_ACLK) then 
 	case(state) is
 		when idle => 
@@ -108,17 +121,25 @@ elsif rising_edge(S_AXI_ACLK) then
 				slave_select_style<='1';
 				SPI_CLK_EDGES<=0;
                 SPI_CLK_COUNT<=0;
-				state<=idle;
+				read_enable<='0';
+				SCK_T<='1';
+				SS_T<='1';
 			elsif RESETN ='1' then 
 				ready_for_transaction <='1';
 				state<=begin_transaction;
+				SCK_T<='1';
+				SS_T<='1';
 			end if;
 			
 		when begin_transaction => 
+		    SCK_T<='1';
 			if (ready_for_transaction = '1' and Master_Inhibit = '0') and Master_or_Slave = '1' and (SPE = '1' and TX_Valid ='1') then 
 				MOSI_T<='0';
-				TX_BUFFER<=Data_In_Parallel;
-				state<=initialize;
+				SCK_T<='0';
+				SS_T<='0';
+				--TX_BUFFER<=Data_In_Parallel;
+				read_enable<='1';
+				state<=read_enable_recognize;
 				ready_for_transaction<='0';
 				
 				if LSB_or_MSB = '1' then -- lSB first 
@@ -134,9 +155,15 @@ elsif rising_edge(S_AXI_ACLK) then
 				end if;
 				
 				slave_select_style<=Manual_Slave_Select;
-				SS_O<=SSR;
+				SS_O<=SSR(C_NUM_SS_BITS-1 downto 0);
 			end if;
-			
+		
+	    when read_enable_recognize =>
+	        state<=read_data_from_line;
+	        read_enable<='0';
+	    when read_data_from_line =>
+	        TX_BUFFER<=Data_In_Parallel;
+			state<=initialize;
 		when initialize =>
 			if transaction_style = '1' and Master_Inhibit = '0' then 
 				MOSI_O<=TX_BUFFER(t_count);
@@ -144,13 +171,13 @@ elsif rising_edge(S_AXI_ACLK) then
 				SCK_O<='0';
 				rising<='1';
 				SPI_CLK_COUNT<=0;
-				SPI_CLK_EDGES <=C_NUM_TRANSFER_BITS -1;
+				SPI_CLK_EDGES <=(2 * C_NUM_TRANSFER_BITS) -1;
 				state<=transmit_receive;
 			elsif transaction_style = '0'  and Master_Inhibit = '0'  then 
 				SCK_O<='0';
 				rising<='1';
 				SPI_CLK_COUNT<=0;
-				SPI_CLK_EDGES <=C_NUM_TRANSFER_BITS -1;
+				SPI_CLK_EDGES <= (2 * C_NUM_TRANSFER_BITS) -1;
 				MOSI_O<=TX_BUFFER(t_count);
 				t_count<=t_count-1;
 				state<=transmit_receive;
@@ -216,14 +243,18 @@ elsif rising_edge(S_AXI_ACLK) then
 					SCK_O<= not SCK_O;
 					SS_O<=(others=>'1');
 					Data_Out_Parallel<=RX_Buffer;
+					write_enable<='1';
 					MOSI_T<='1';
+					SCK_T<='1';
 					state<=delay;
 					count<=0;
 				elsif SPI_CLK_EDGES = 0 and slave_select_style = '1' then 
 					rising <=not rising; 
 					SCK_O <= not SCK_O;	
 					Data_Out_Parallel<=RX_Buffer;
+					write_enable<='1';
 					MOSI_T<='1';
+					SCK_T<='1';
 					state<=delay;
 					count<=0;
 				end if;
@@ -237,6 +268,7 @@ elsif rising_edge(S_AXI_ACLK) then
 		when delay => 
 			if count<6 then
 				count<=count+1;
+				write_enable<='0';
 			elsif count =6 then 
 				count<=0;
 				state<=idle;
@@ -245,5 +277,4 @@ elsif rising_edge(S_AXI_ACLK) then
 	end case;
 end if;
 end process;
-
 end behavioral;

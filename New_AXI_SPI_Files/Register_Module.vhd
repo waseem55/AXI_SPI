@@ -1,6 +1,29 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 entity Register_Module is
-port(
-	
+    generic(
+        C_BASEADDR : std_logic_vector(31 downto 0) := X"00000000");
+    
+    port(
+         : in std_logic
+        
+         );
+    
+    constant SRR_ADR : std_logic_vector(31 downto 0) := std_logic_vector(unsigned(C_BASEADDR) + x"40");
+    constant SPICR_ADR : std_logic_vector(31 downto 0) := std_logic_vector(unsigned(C_BASEADDR) + x"60");
+    constant SPISR_ADR : std_logic_vector(31 downto 0) := std_logic_vector(unsigned(C_BASEADDR) + x"64");
+    constant SPIDTR_ADR : std_logic_vector(31 downto 0) := std_logic_vector(unsigned(C_BASEADDR) + x"68");
+    constant SPIDRR_ADR : std_logic_vector(31 downto 0) := std_logic_vector(unsigned(C_BASEADDR) + x"6C");
+    constant SPISSR_ADR : std_logic_vector(31 downto 0) := std_logic_vector(unsigned(C_BASEADDR) + x"70");
+    constant TXFIFO_OR_ADR : std_logic_vector(31 downto 0) := std_logic_vector(unsigned(C_BASEADDR) + x"74");
+    constant RXFIFO_OR_ADR : std_logic_vector(31 downto 0) := std_logic_vector(unsigned(C_BASEADDR) + x"78");
+    constant DGIER_ADR : std_logic_vector(31 downto 0) := std_logic_vector(unsigned(C_BASEADDR) + x"1C");
+    constant IPISR_ADR : std_logic_vector(31 downto 0) := std_logic_vector(unsigned(C_BASEADDR) + x"20");
+    constant IPIER_ADR : std_logic_vector(31 downto 0) := std_logic_vector(unsigned(C_BASEADDR) + x"28");
+    
+    
+    
+    
+end Register_Module;

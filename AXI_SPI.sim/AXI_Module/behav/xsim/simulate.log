@@ -1,4 +1,0 @@
-Vivado Simulator 2019.2
-Time resolution is 1 ps
-Warning: WT_5 failed: S_AXI_BVALID /= '0'
-Time: 115 ns  Iteration: 0  Process: /TB_AXI_Module/line__127  File: D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.srcs/AXI_Module/new/TB_AXI_Module.vhd

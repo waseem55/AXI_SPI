@@ -7,9 +7,14 @@ entity Register_Module is
         C_BASEADDR : std_logic_vector(31 downto 0) := X"00000000");
     
     port(
-         : in std_logic
+        i_CLK       : in std_logic;
+        i_RESETN    : in std_logic;
+        i_WREQUEST  : in std_logic;
+        i_WSTB      : in std_logic_vector(3 downto 0);
+        i_DATA      : in std_logic_vector(31 downto 0);
+        o_DATA      : out std_logic_vector(31 downto 0);
         
-         );
+        );
     
     constant SRR_ADR : std_logic_vector(31 downto 0) := std_logic_vector(unsigned(C_BASEADDR) + x"40");
     constant SPICR_ADR : std_logic_vector(31 downto 0) := std_logic_vector(unsigned(C_BASEADDR) + x"60");

@@ -4,8 +4,8 @@ Nov  6 2019
 21:57:16
 C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/AXI_SPI.srcs/sim_1/new/SPI_MASTER_BLOCK_TEST_BENCH.vhd,1591025407,vhdl,,,,spi_master_block_test_bench,,,,,,,,
 C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/AXI_SPI.srcs/sources_1/new/AXI_Module.vhd,1589762053,vhdl,,,,axi_module,,,,,,,,
-C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/New_AXI_SPI_Files/SPI_MASTER_BLOCK.vhd,1591025219,vhdl,,,,master_block,,,,,,,,
-C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/New_AXI_SPI_Files/SPI_Module.vhd,1591025219,vhdl,,,,spi_module,,,,,,,,
-C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/New_AXI_SPI_Files/Slave_Block.vhd,1591025219,vhdl,,,,slave_block,,,,,,,,
-C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/New_AXI_SPI_Files/component_pckg.vhd,1591025219,vhdl,C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/New_AXI_SPI_Files/SPI_Module.vhd,,,component_pckg,,,,,,,,
-C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/New_AXI_SPI_Files/tb_SPI.vhd,1591025219,vhdl,,,,tb_spi,,,,,,,,
+C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/New_AXI_SPI_Files/SPI_MASTER_BLOCK.vhd,1591029980,vhdl,,,,master_block,,,,,,,,
+C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/New_AXI_SPI_Files/SPI_Module.vhd,1591029980,vhdl,,,,spi_module,,,,,,,,
+C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/New_AXI_SPI_Files/Slave_Block.vhd,1591029980,vhdl,,,,slave_block,,,,,,,,
+C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/New_AXI_SPI_Files/component_pckg.vhd,1591029980,vhdl,C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/New_AXI_SPI_Files/SPI_Module.vhd,,,component_pckg,,,,,,,,
+C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/New_AXI_SPI_Files/tb_SPI.vhd,1591029980,vhdl,,,,tb_spi,,,,,,,,

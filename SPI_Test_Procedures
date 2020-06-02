@@ -1,0 +1,139 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity TB_SPI_Module is
+end TB_SPI_Module;
+
+
+architecture Test of TB_SPI_Module is
+
+component SPI_Module
+generic(
+	C_SCK_RATIO			: integer := 4;
+	C_NUM_SS_BITS		: integer := 1;
+	C_NUM_TRANSFER_BItS	: integer := 8
+	);
+port(
+	SYS_CLK				: in std_logic;
+	RESETN_I			: in std_logic;
+	
+	-- SPI Ports --
+	SPISEL				: in std_logic;
+	SCK_I				: in std_logic;
+	SCK_O				: inout std_logic;
+	SCK_T				: out std_logic;
+	MOSI_I				: in std_logic;
+	MOSI_O				: out std_logic;
+	MOSI_T				: inout std_logic;
+	MISO_I				: in std_logic;
+	MISO_O				: out std_logic;
+	MISO_T				: out std_logic;
+	SS_O				: out std_logic_vector(C_NUM_SS_BITS-1 downto 0);
+	SS_T				: out std_logic_vector(C_NUM_SS_BITS-1 downto 0);
+	
+	-- Internal Ports --
+	o_Ready				: inout std_logic;
+	i_TX_DATA			: in std_logic_vector(C_NUM_TRANSFER_BITS-1 downto 0);
+	o_RX_DATA			: out std_logic_vector(C_NUM_TRANSFER_BITS-1 downto 0);
+	i_SSR				: in std_logic_vector(31 downto 0);
+--	i_TX_Valid			: in std_logic;
+	
+	-- To/From FIFOs
+	Tx_Empty			: in std_logic;
+	read_enable			: out std_logic;
+	write_enable		: out std_logic;
+	
+	-- To and from registers
+	i_Reg_Ack			: in std_logic;			-- used to latch SPICR input
+	i_SPICR				: in std_logic_vector(31 downto 0);
+	o_MODF				: out std_logic;        -- level '1' to signal error
+	o_Slave_MODF        : out std_logic;        -- Level '1' to signal error
+	o_slave_mode_select	: out std_logic;
+	IP2INTC_IRPT		: out std_logic												-- to do: figure out what to use it for
+	);
+
+end component;
+
+
+signal SYS_CLK
+signal RESETN_I
+signal SCK_I
+signal SCK_O
+signal SCK_T
+signal MOSI_I
+signal MOSI_O
+signal MOSI_T
+signal MISO_I
+signal MISO_O
+signal MISO_T
+signal SS_O
+signal SS_T
+signal o_Ready
+signal i_TX_DATA
+signal o_RX_DATA
+signal i_SSR
+signal i_TX_Valid
+signal Tx_Empty 
+signal read_enable
+signal write_enable
+signal i_Reg_Ack
+signal i_SPICR
+signal o_MODF
+signal o_Slave_MODF
+signal o_slave_mode_select
+signal IP2INTC_IRPT
+
+begin
+
+
+
+	DUT : SPI_Module port map(SYS_CLK=>SYS_CLK, RESETN_I=>RESETN_I, SCK_I=>SCK_I, SCK_O=>SCK_O, SCK_T=>SCK_T, MOSI_I=>MOSI_I, MOSI_O=>MOSI_O, MOSI_T=>MOSI_T, 
+	MISO_T=>MISO_T, SS_O=>SS_O, SS_T=>SS_T, o_Ready=>o_Ready, i_TX_Valid=>i_TX_Valid, Tx_Empty=>Tx_Empty, read_enable=>read_enable, write_enable=>write_enable, 
+	i_Reg_Ack=>i_Reg_Ack, i_SPICR=>i_SPICR,o_MODF=>o_MODF, o_Slave_MODF=>o_Slave_MODF, o_slave_mode_select=>o_slave_mode_select, IP2INTC_IRPT=>IP2INTC_IRPT);
+
+SYS_CLK<=not SYS_CLK after 5ns;
+RESETN_I<= '0', '1' after 20ns;
+process 
+begin
+-------------------------------SPI_TEST_CASE_1------------------------------------------------
+wait for 5ns;
+assert o_RX_DATA = "00000000000000000000000000000000" and read_enable = '0' and write_enable = '0' and MISO_T = '1' and MOSI_T = '1' and o_Ready='0' and MOSI_O = '0' and SCK_O = '0' 
+report "Reset failed"
+severity failure;
+wait until RESETN_I = '1';
+wait until rising_edge(SYS_CLK);
+-------------------------------END_SPI_TEST_CASE_1--------------------------------------------
+
+-------------------------------SPI_TEST_CASE_2------------------------------------------------
+wait; 
+-------------------------------END_SPI_TEST_CASE_2--------------------------------------------
+
+-------------------------------SPI_TEST_CASE_3------------------------------------------------
+-------------------------------END_SPI_TEST_CASE_3--------------------------------------------
+
+-------------------------------SPI_TEST_CASE_4------------------------------------------------
+-------------------------------END_SPI_TEST_CASE_4--------------------------------------------
+
+-------------------------------SPI_TEST_CASE_5------------------------------------------------
+-------------------------------END_SPI_TEST_CASE_5--------------------------------------------
+
+-------------------------------SPI_TEST_CASE_6------------------------------------------------
+-------------------------------END_SPI_TEST_CASE_6--------------------------------------------
+
+-------------------------------SPI_TEST_CASE_7------------------------------------------------
+-------------------------------END_SPI_TEST_CASE_7--------------------------------------------
+
+-------------------------------SPI_TEST_CASE_8------------------------------------------------
+-------------------------------END_SPI_TEST_CASE_8--------------------------------------------
+
+
+end Test;
+
+
+
+
+
+
+
+
+

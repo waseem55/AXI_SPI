@@ -1,9 +1,2 @@
-INFO: [VRFC 10-163] Analyzing VHDL file "D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/New_AXI_SPI_Files/SPI_MASTER_BLOCK.vhd" into library xil_defaultlib
-INFO: [VRFC 10-3107] analyzing entity 'Master_Block'
-INFO: [VRFC 10-163] Analyzing VHDL file "D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/New_AXI_SPI_Files/component_pckg.vhd" into library xil_defaultlib
-INFO: [VRFC 10-163] Analyzing VHDL file "D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/New_AXI_SPI_Files/SPI_Module.vhd" into library xil_defaultlib
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/FPGA_PROJECTS/AXI_SPI_CORE_IP/AXI_SPI/New_AXI_SPI_Files/SPI_Module.vhd" into library xil_defaultlib
 INFO: [VRFC 10-3107] analyzing entity 'SPI_Module'
-INFO: [VRFC 10-163] Analyzing VHDL file "D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/New_AXI_SPI_Files/Slave_Block.vhd" into library xil_defaultlib
-INFO: [VRFC 10-3107] analyzing entity 'Slave_Block'
-INFO: [VRFC 10-163] Analyzing VHDL file "D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/New_AXI_SPI_Files/tb_SPI.vhd" into library xil_defaultlib
-INFO: [VRFC 10-3107] analyzing entity 'tb_SPI'

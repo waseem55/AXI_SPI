@@ -197,11 +197,11 @@ begin
 						end if;
 						
 					when wait_for_ack => 
+					    read_enable<='0';
 						if read_ack = '1' then --read_ack signals new valid data on the line.  registers/top entity must make signal must go low before next transaction initiated.  
 							S_AXI_RDATA<=read_data; -- puts data incoming from register onto the read data line 
 							S_AXI_RVALID<='1'; -- tells master that valid data is on the line
 							S_AXI_RRESP<=read_resp;
-							read_enable<='0';
 							read_address<= (others => '0');
 							rstate<=wait_master_read_ready;
 						end if;

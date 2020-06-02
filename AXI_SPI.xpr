@@ -182,7 +182,6 @@
     <FileSet Name="Register_Module" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/Register_Module">
       <File Path="$PSRCDIR/Register_Module/new/tb_Register_Module.vhd">
         <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>

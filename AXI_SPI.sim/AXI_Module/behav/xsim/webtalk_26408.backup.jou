@@ -2,13 +2,11 @@
 # Webtalk v2019.2.1 (64-bit)
 # SW Build 2729669 on Thu Dec  5 04:49:17 MST 2019
 # IP Build 2729494 on Thu Dec  5 07:38:25 MST 2019
-# Start of session at: Mon May 18 16:27:06 2020
-# Process ID: 8016
+# Start of session at: Mon Jun  1 12:00:49 2020
+# Process ID: 26408
 # Current directory: D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.sim/AXI_Module/behav/xsim
 # Command line: wbtcv.exe -mode batch -source D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.sim/AXI_Module/behav/xsim/xsim.dir/TB_AXI_Module_behav/webtalk/xsim_webtalk.tcl -notrace
 # Log file: D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.sim/AXI_Module/behav/xsim/webtalk.log
 # Journal file: D:/My Files/LTTS/FPGA Training/Projects/AXI_SPI/AXI_SPI.sim/AXI_Module/behav/xsim\webtalk.jou
 #-----------------------------------------------------------
 source D:/My -notrace
-couldn't read file "D:/My": permission denied
-INFO: [Common 17-206] Exiting Webtalk at Mon May 18 16:27:06 2020...

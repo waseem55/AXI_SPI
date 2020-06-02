@@ -1,0 +1,7 @@
+# compile vhdl design source files
+vhdl xil_defaultlib  \
+"../../../../AXI_SPI.srcs/sources_1/new/Register_Module.vhd" \
+"../../../../AXI_SPI.srcs/Register_Module/new/tb_Register_Module.vhd" \
+
+# Do not sort compile order
+nosort

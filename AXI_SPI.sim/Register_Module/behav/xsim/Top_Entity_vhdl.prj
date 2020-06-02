@@ -1,0 +1,11 @@
+# compile vhdl design source files
+vhdl xil_defaultlib  \
+"../../../../AXI_SPI.srcs/sources_1/new/AXI_Module.vhd" \
+"../../../../New_AXI_SPI_Files/SPI_MASTER_BLOCK.vhd" \
+"../../../../New_AXI_SPI_Files/component_pckg.vhd" \
+"../../../../New_AXI_SPI_Files/SPI_Module.vhd" \
+"../../../../New_AXI_SPI_Files/Slave_Block.vhd" \
+"../../../../AXI_SPI.srcs/sources_1/new/Top_Entity.vhd" \
+
+# Do not sort compile order
+nosort

@@ -81,6 +81,7 @@ component Master_Block
 		-- signals master is ready for SW to start a new transaction
 		ready_for_transaction: inout std_logic;
 		
+		inhibit : out std_logic;
 		--data valid pulse from the Tx_FIFO
 		TX_Valid: in std_logic;
 		
@@ -127,7 +128,7 @@ port(
 	Tx_Empty			: in std_logic;
 	read_enable			: out std_logic;
 	write_enable		: out std_logic;
-	
+	inhibit             : out std_logic;
 	-- To and from registers
 	i_Reg_Ack			: in std_logic;			-- used to latch SPICR input
 	i_SPICR				: in std_logic_vector(31 downto 0);

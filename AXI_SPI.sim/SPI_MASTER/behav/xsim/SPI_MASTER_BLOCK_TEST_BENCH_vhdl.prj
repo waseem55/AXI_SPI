@@ -1,7 +1,0 @@
-# compile vhdl design source files
-vhdl xil_defaultlib  \
-"../../../../AXI_SPI.srcs/sources_1/new/SPI_MASTER_BLOCK.vhd" \
-"../../../../New_AXI_SPI_Files/SPI_Module.vhd" \
-
-# Do not sort compile order
-nosort

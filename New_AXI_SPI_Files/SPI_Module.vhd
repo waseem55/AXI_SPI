@@ -28,6 +28,7 @@ port(
 	
 	-- Internal Ports --
 	o_Ready				: inout std_logic;
+	inhibit             : out std_logic;
 	i_TX_DATA			: in std_logic_vector(C_NUM_TRANSFER_BITS-1 downto 0);
 	o_RX_DATA			: out std_logic_vector(C_NUM_TRANSFER_BITS-1 downto 0);
 	i_SSR				: in std_logic_vector(31 downto 0);
@@ -89,7 +90,8 @@ begin
 		ready_for_transaction	=> o_Ready,
 		TX_Valid				=> Tx_Not_Empty,
 		read_enable				=> M_read_enable,
-		write_enable			=> M_write_enable
+		write_enable			=> M_write_enable,
+		inhibit                 => inhibit
 		);
 	
 	Slave: Slave_block generic map

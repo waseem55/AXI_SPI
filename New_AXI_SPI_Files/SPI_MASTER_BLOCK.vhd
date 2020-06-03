@@ -50,6 +50,9 @@ entity Master_Block is
 			--write_enable for RX_FIFO
 			write_enable: out std_logic;
 			
+			-- pulse to indicate transaction has been aborted
+			inhibit: out std_logic;
+			
 			--data valid pulse from the Tx_FIFO
 			TX_Valid: in std_logic
 		
@@ -95,6 +98,7 @@ SPI_CLK_EDGES<=0;
 SPI_CLK_COUNT<=0;
 read_enable<='0';
 write_enable<='0';
+inhibit<='0';
 elsif rising_edge(S_AXI_ACLK) then 
 	case(state) is
 		when idle => 
@@ -114,9 +118,11 @@ elsif rising_edge(S_AXI_ACLK) then
 				SPI_CLK_EDGES<=0;
                 SPI_CLK_COUNT<=0;
 				read_enable<='0';
+				inhibit<='0';
 			elsif RESETN ='1' then 
 				ready_for_transaction <='1';
 				state<=begin_transaction;
+				inhibit<='0';
 			end if;
 			
 		when begin_transaction => 
@@ -143,11 +149,33 @@ elsif rising_edge(S_AXI_ACLK) then
 			end if;
 		
 	    when read_enable_recognize =>
-	        state<=read_data_from_line;
-	        read_enable<='0';
+	        
+	        if Master_Inhibit = '1' then 
+				state<=delay;
+				count<=0;
+				SCK_O <= '0';
+				rising <= '1';
+				write_enable<='0';
+				read_enable<='0';
+				inhibit <= '1';
+			elsif Master_Inhibit = '0' then
+			   state<=read_data_from_line;
+	           read_enable<='0';
+			end if;
 	    when read_data_from_line =>
-	        TX_BUFFER<=Data_In_Parallel;
-			state<=initialize;
+	        if Master_Inhibit = '1' then 
+				state<=delay;
+				count<=0;
+				SCK_O <= '0';
+				rising <= '1';
+				write_enable<='0';
+				read_enable<='0';
+				inhibit <= '1';
+			elsif Master_Inhibit = '0' then
+	           TX_BUFFER<=Data_In_Parallel;
+			   state<=initialize;
+			end if;
+			
 		when initialize =>
 			if transaction_style = '1' and Master_Inhibit = '0' then 
 				MOSI_O<=TX_BUFFER(t_count);
@@ -168,6 +196,11 @@ elsif rising_edge(S_AXI_ACLK) then
 			elsif Master_Inhibit = '1' then 
 				state<=delay;
 				count<=0;
+				SCK_O <= '0';
+				rising <= '1';
+				write_enable<='0';
+				read_enable<='0';
+				inhibit <= '1';
 			end if;
 		
 		when transmit_receive =>
@@ -242,7 +275,11 @@ elsif rising_edge(S_AXI_ACLK) then
 			elsif Master_Inhibit = '1' then 
 				state<=delay;
 				count<=0;
-				
+				SCK_O <= '0';
+				rising <= '1';
+				write_enable<='0';
+				read_enable<='0';
+				inhibit <= '1';
 			end if;
 			
 		when delay => 

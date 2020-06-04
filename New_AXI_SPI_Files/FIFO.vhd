@@ -1,5 +1,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 entity FIFO is
 generic( depth : integer range 4 to 32 := 16;
@@ -8,7 +9,8 @@ port( wdata : in std_logic_vector(width - 1 downto 0);
       w_enable, r_enable, reset : in std_logic;
       clk : in std_logic;
       rdata : out std_logic_vector(width - 1 downto 0);
-      full_flag, empty_flag : out std_logic);
+      full_flag, empty_flag : out std_logic;
+	  occupancy_flag: std_logic_vector(3 downto 0);
 end FIFO;
 
 architecture behavior of FIFO is
@@ -16,7 +18,7 @@ type FIFO_array is array (0 to depth - 1) of std_logic_vector(width - 1 downto 0
 signal fifo : FIFO_array;
 signal wpointer, rpointer : integer range 0 to (depth-1);
 signal r_round, w_round, fflag_temp, eflag_temp : std_logic;
-
+signal integer_occupancy_flag: integer;
 begin
  
 Read_Write:
@@ -49,7 +51,54 @@ begin
                     rpointer <= rpointer + 1;
                 end if;
             end if;
-        end if;
+       
+		--add occupancy_flag logic here 
+			if w_round /= r_round then 
+				if fflag_temp = '0' then 
+					if w_enable = '1' and r_enable = '1' then 
+						integer_occupancy_flag<=((wpointer+1) + (depth-1-rpointer)-1);
+					elsif w_enable = '1' and r_enable = '0' then 
+						integer_occupancy_flag<=((wpointer+1) + (depth-1-rpointer));
+					elsif w_enable = '0' and r_enable = '1' then 
+						integer_occupancy_flag<=((wpointer+1) + (depth-1-rpointer)-2)
+					elsif w_enable = '0' and r_enable = '0' then 
+						integer_occupancy_flag<=((wpointer)+(depth-rpointer)-1);
+					end if;
+				elsif fflag_temp = '1' then 
+					if w_enable = '1' and r_enable = '1' then 
+						integer_occupancy_flag<=depth-2;
+					elsif w_enable = '1' and r_enable = '0' then 
+						integer_occupancy_flag<=depth-1;
+					elsif w_enable = '0' and r_enable = '1' then 
+						integer_occupancy_flag<=depth-2;
+					elsif w_enable = '0' and r_enable = '0' then 
+						integer_occupancy_flag<=depth - 1;--because must be one less than true value to be translated to binary format in the register
+					end if;
+				end if;
+			elsif w_round = r_round then 
+				if eflag_temp = '0' then 
+					if w_enable = '1' and r_enable = '1' then 
+						integer_occupancy_flag<=wpointer-rpointer-1;
+					elsif w_enable = '1' and r_enable = '0' then 
+						integer_occupancy_flag<=wpointer-rpointer;
+					elsif w_enable = '0' and r_enable = '1' then 
+						integer_occupancy_flag<=wpointer-rpointer-2;
+					elsif w_enable = '0' and r_enable = '0' then 
+						integer_occupancy_flag<=wpointer-rpointer-1;
+					end if;
+				elsif eflag_temp = '1' then 
+					if w_enable = '1' and r_enable = '1' then 
+						integer_occupancy_flag<=0;
+					elsif w_enable = '1' and r_enable = '0' then 
+						integer_occupancy_flag<=0;
+					elsif w_enable = '0' and r_enable = '1' then 
+						integer_occupancy_flag<=0;
+					elsif w_enable = '0' and r_enable = '0' then 
+						integer_occupancy_flag<=0;
+					end if;
+				end if;
+			end if;
+		end if;
     end if;
 end process;
 
@@ -60,5 +109,5 @@ eflag_temp <= '1' when (rpointer = wpointer) and (w_round = r_round)
 
 full_flag <= fflag_temp;
 empty_flag <= eflag_temp;
-
+occupancy_flag<=std_logic_vector(to_unsigned(integer_occupancy_flag, occupancy_flag'length));
 end behavior;

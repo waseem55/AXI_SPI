@@ -67,7 +67,7 @@ component Master_Block
 		Manual_Slave_Select: in std_logic; -- bit controlling whether a transaction happens in manual or automatic slave select mode
 		
 		-- Slave select register contents
-		SSR: in std_logic_vector(31 downto 0);
+		SPISSR: in std_logic_vector(31 downto 0);
 		
 		-- tri-state enable output for multi-master bus arbitration and preventing errors in slave mode
 --		MOSI_T: inout std_logic;
@@ -120,7 +120,7 @@ port(
 	o_Ready				: inout std_logic;
 	i_TX_DATA			: in std_logic_vector(C_NUM_TRANSFER_BITS-1 downto 0);
 	o_RX_DATA			: out std_logic_vector(C_NUM_TRANSFER_BITS-1 downto 0);
-	i_SSR				: in std_logic_vector(31 downto 0);
+	i_SPISSR				: in std_logic_vector(31 downto 0);
 --	i_TX_Valid			: in std_logic;
 	
 	-- To/From FIFOs
@@ -177,6 +177,87 @@ port(
 	read_ack		: in std_logic;
 	read_resp		: in std_logic_vector(1 downto 0)
 	);
+end component;
+
+component Register_Module
+generic(
+    C_BASEADDR : std_logic_vector(31 downto 0) := X"00000000";
+    C_NUM_TRANSFER_BITS : integer := 8);
+
+port(
+    i_CLK               : in std_logic;
+    i_RESETN            : in std_logic;
+    
+    ------------- SPISR internal bits ----------------
+    -- SPISR signals are levels coming from the top entity
+    i_RX_EMPTY          : in std_logic;
+    i_RX_FULL           : in std_logic;
+    i_TX_EMPTY          : in std_logic;
+    i_TX_FULL           : in std_logic;
+    i_MODF              : in std_logic;
+    i_Slave_Mode_Select : in std_logic;
+    
+    o_REG_ACk           : out std_logic;
+    
+    ------------------- To/From FIFOs ---------------------
+    i_TX_FIFO_OCY       : in std_logic_vector(3 downto 0);
+    i_RX_FIFO_OCY       : in std_logic_vector(3 downto 0);
+    i_RX_FIFO           : in std_logic_vector(C_NUM_TRANSFER_BITS-1 downto 0);
+    o_RPULSE            : out std_logic;
+    o_WPULSE            : out std_logic;
+    o_TX_FIFO           : out std_logic_vector(C_NUM_TRANSFER_BITS-1 downto 0);
+    
+    ---------------- IPISR toggling strobes ------------------
+    -- IPISR signals are pulses coming from the top entity
+    i_MODF_INTERRUPT    : in std_logic;
+    i_Slave_MODF        : in std_logic;
+    i_DTR_EMPTY         : in std_logic;
+    i_DTR_UNDERRUN      : in std_logic;
+    i_DRR_FULL          : in std_logic;
+    i_DRR_OVERRUN       : in std_logic;
+    i_TX_FIFO_HALFEMPTY : in std_logic;
+    i_SLAVE_MODE_SELECT_INTERRUPT : in std_logic;
+    i_DRR_NOT_EMPTY     : in std_logic;
+    
+    -------------------- Registers -------------------------
+    o_SRR               : out std_logic_vector(31 downto 0);
+    o_SPICR             : out std_logic_vector(31 downto 0);
+    o_SPISR             : out std_logic_vector(31 downto 0);
+    o_SPIDTR            : out std_logic_vector(31 downto 0);
+    o_SPIDRR            : out std_logic_vector(31 downto 0);
+    o_SPISSR            : out std_logic_vector(31 downto 0);
+    o_TX_FIFO_OCY       : out std_logic_vector(31 downto 0);
+    o_RX_FIFO_OCY       : out std_logic_vector(31 downto 0);
+    o_DGIER             : out std_logic_vector(31 downto 0);
+    o_IPISR             : out std_logic_vector(31 downto 0);
+    o_IPIER             : out std_logic_vector(31 downto 0);
+    
+    -------------------- AXI Ports -------------------------
+    i_WREQUEST          : in std_logic;
+    i_RREQUEST          : in std_logic;
+    o_AXI_READ_ACK       : out std_logic;            -- to AXI to latch read data
+    o_WRITE_ERROR       : out std_logic_vector(1 downto 0);
+    o_READ_ERROR        : out std_logic_vector(1 downto 0);
+    i_WSTB              : in std_logic_vector(3 downto 0);
+    i_WADDR             : in std_logic_vector(31 downto 0);
+    i_RADDR             : in std_logic_vector(31 downto 0);
+    i_DATA              : in std_logic_vector(31 downto 0);
+    o_DATA              : out std_logic_vector(31 downto 0)
+    
+    );
+end component;
+
+component FIFO
+generic(
+    depth : integer range 4 to 32 := 16;
+    width : integer range 8 to 32 := 8
+    );
+port( 
+    wdata : in std_logic_vector(width - 1 downto 0);
+    w_enable, r_enable, reset : in std_logic;
+    clk : in std_logic;
+    rdata : out std_logic_vector(width - 1 downto 0);
+    full_flag, empty_flag : out std_logic);
 end component;
 
 end component_pckg;

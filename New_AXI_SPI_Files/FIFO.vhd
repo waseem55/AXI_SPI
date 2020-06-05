@@ -10,7 +10,7 @@ port( wdata : in std_logic_vector(width - 1 downto 0);
       clk : in std_logic;
       rdata : out std_logic_vector(width - 1 downto 0);
       full_flag, empty_flag : out std_logic;
-	  occupancy_flag: std_logic_vector(3 downto 0);
+	  occupancy_flag: out std_logic_vector(3 downto 0);
 	  half_full_flag: out std_logic);
 	  
 end FIFO;
@@ -35,7 +35,7 @@ begin
         rpointer <= 0;
         rdata <= (others => '0');
 		half_full_flag<='0';
-		occupancy_flag<='0';
+		occupancy_flag<="0000";
 		integer_occupancy_flag<=0;
     else
         if rising_edge(clk) then
@@ -66,7 +66,7 @@ begin
 					elsif w_enable = '1' and r_enable = '0' then 
 						integer_occupancy_flag<=((wpointer+1) + (depth-1-rpointer));
 					elsif w_enable = '0' and r_enable = '1' then 
-						integer_occupancy_flag<=((wpointer+1) + (depth-1-rpointer)-2)
+						integer_occupancy_flag<=((wpointer+1) + (depth-1-rpointer)-2);
 					elsif w_enable = '0' and r_enable = '0' then 
 						integer_occupancy_flag<=((wpointer)+(depth-rpointer)-1);
 					end if;

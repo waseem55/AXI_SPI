@@ -31,7 +31,7 @@ port(
 	inhibit             : out std_logic;
 	i_TX_DATA			: in std_logic_vector(C_NUM_TRANSFER_BITS-1 downto 0);
 	o_RX_DATA			: out std_logic_vector(C_NUM_TRANSFER_BITS-1 downto 0);
-	i_SSR				: in std_logic_vector(31 downto 0);
+	i_SPISSR		    : in std_logic_vector(31 downto 0);
 --	i_TX_Valid			: in std_logic;
 	
 	-- To/From FIFOs
@@ -84,7 +84,7 @@ begin
 		LSB_or_MSB				=> LSB_or_MSB,
 		SPE						=> SPE,
 		Manual_Slave_Select		=> Manual_SS,
-		SSR						=> i_SSR,
+		SPISSR					=> i_SPISSR,
 		SS_O					=> SS_O,
 		SCK_O					=> SCK_O,
 		ready_for_transaction	=> o_Ready,

@@ -30,7 +30,7 @@ entity Master_Block is
 			Manual_Slave_Select: in std_logic; -- bit controlling whether a transaction happens in manual or automatic slave select mode
 			
 			-- Slave select register contents
-			SSR: in std_logic_vector(31 downto 0);
+			SPISSR: in std_logic_vector(31 downto 0);
 			
 			-- tri-state enable output for multi-master bus arbitration and preventing errors in slave mode
 --			MOSI_T: inout std_logic;
@@ -145,7 +145,7 @@ elsif rising_edge(S_AXI_ACLK) then
 				end if;
 				
 				slave_select_style<=Manual_Slave_Select;
-				SS_O<=SSR(C_NUM_SS_BITS-1 downto 0);
+				SS_O<=SPISSR(C_NUM_SS_BITS-1 downto 0);
 			end if;
 		
 	    when read_enable_recognize =>

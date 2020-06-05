@@ -11,6 +11,8 @@ port( wdata : in std_logic_vector(width - 1 downto 0);
       rdata : out std_logic_vector(width - 1 downto 0);
       full_flag, empty_flag : out std_logic;
 	  occupancy_flag: std_logic_vector(3 downto 0);
+	  half_full_flag: out std_logic);
+	  
 end FIFO;
 
 architecture behavior of FIFO is
@@ -19,6 +21,7 @@ signal fifo : FIFO_array;
 signal wpointer, rpointer : integer range 0 to (depth-1);
 signal r_round, w_round, fflag_temp, eflag_temp : std_logic;
 signal integer_occupancy_flag: integer;
+
 begin
  
 Read_Write:
@@ -31,6 +34,9 @@ begin
         wpointer <= 0;
         rpointer <= 0;
         rdata <= (others => '0');
+		half_full_flag<='0';
+		occupancy_flag<='0';
+		integer_occupancy_flag<=0;
     else
         if rising_edge(clk) then
             if w_enable = '1' and fflag_temp /= '1' then
@@ -98,6 +104,31 @@ begin
 					end if;
 				end if;
 			end if;
+			
+			
+			
+			if  integer_occupancy_flag = 4 and depth = 8 then 
+				if r_enable = '1' and w_enable = '0' then
+					half_full_flag<='1';
+				else 
+					half_full_flag<='0';
+				end if;
+			elsif integer_occupancy_flag = 8 and depth =16  then 
+				if r_enable = '1' and w_enable = '0' then
+					half_full_flag<='1';
+				else 
+					half_full_flag<='0';
+				end if;
+			elsif integer_occupancy_flag = 16 and depth =32 then 
+				if r_enable = '1' and w_enable = '0' then
+					half_full_flag<='1';
+				else 
+					half_full_flag<='0';
+				end if;
+			else 
+				half_full_flag<='0';
+			end if;
+				
 		end if;
     end if;
 end process;

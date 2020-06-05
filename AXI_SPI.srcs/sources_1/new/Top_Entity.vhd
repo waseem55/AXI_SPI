@@ -82,6 +82,7 @@ signal AXI_RDATA            : std_logic_vector(31 downto 0);
 signal AXI_RADDR            : std_logic_vector(31 downto 0);
 signal AXI_wrequest         : std_logic;
 signal AXI_rrequest         : std_logic;
+signal IntRdy               : std_logic;
 
 ---------- FIFO Intermediate Signals ------------
 signal TXFIFO_data_in       : std_logic_vector(C_NUM_TRANSFER_BITS -1 downto 0);
@@ -96,6 +97,28 @@ signal TXFIFO_read_pulse    : std_logic;
 signal TXFIFO_write_pulse   : std_logic;
 signal RXFIFO_read_pulse    : std_logic;
 signal RXFIFO_write_pulse   : std_logic;
+signal TXFIFO_OCY           : std_logic_vector(3 downto 0);
+signal RXFIFO_OCY           : std_logic_vector(3 downto 0);
+signal TXFIFO_HALF_EMPTY    : std_logic;
+signal RXFIFO_HALF_EMPTY    : std_logic;
+
+---------- Pulsing Signals for Register Module-------
+signal MODF_INTERRUPT       : std_logic;
+signal prev_MODF_INTERRUPT       : std_logic;
+signal Slave_MODF           : std_logic;
+signal prev_Slave_MODF           : std_logic;
+signal DTR_EMPTY            : std_logic;
+signal prev_DTR_EMPTY            : std_logic;
+signal DTR_UNDERRUN         : std_logic;   -- no need topulse it because it's already pulsed
+signal DRR_FULL             : std_logic;
+signal prev_DRR_FULL             : std_logic;
+signal DRR_OVERRUN          : std_logic;   -- no need topulse it because it's already pulsed
+signal TXFIFO_HALFEMPTY_pulse    : std_logic;
+signal prev_TXFIFO_HALFEMPTY    : std_logic;
+signal SLAVE_MODE_SELECT_INTERRUPT : std_logic;
+signal prev_SLAVE_MODE_SELECT_INTERRUPT : std_logic;
+signal DRR_NOT_EMPTY        : std_logic;
+signal prev_DRR_NOT_EMPTY        : std_logic;
 
 ---------- Register Module Intermediate Signals -----------
 signal SRR                  : std_logic_vector(31 downto 0);
@@ -113,6 +136,11 @@ signal Reg_Ack              : std_logic;
 signal AXI_Read_Ack         : std_logic;
 signal Write_error          : std_logic_vector(1 downto 0);
 signal Read_error           : std_logic_vector(1 downto 0);
+signal write_request        : std_logic;
+
+
+signal DTR_underrun_level   : std_logic;
+signal DRR_overrun_level    : std_logic;
 
 begin
 
@@ -156,8 +184,7 @@ begin
 		i_SPICR				=> SPICR,
 		o_MODF				=> MODF_level,
 		o_Slave_MODF        => Slave_MODF_level,
-		o_slave_mode_select	=> slave_m_select_level,
-		IP2INTC_IRPT		=> 
+		o_slave_mode_select	=> slave_m_select_level
 		);
 	
 	AXI: AXI_Module
@@ -185,8 +212,8 @@ begin
 		-- Internal Write Ports
 	
 		Error			=> Write_error,
-		IntRdy			=> ,                    -- to do
-		Wrequest		=> AXI_wrequest,        -- to do
+		IntRdy			=> IntRdy,
+		Wrequest		=> AXI_wrequest,
 		WSTB			=> WSTB,
 		Wdata			=> AXI_WDATA,
 		Waddr			=> AXI_WADDR,
@@ -221,8 +248,8 @@ begin
         o_REG_ACk           => Reg_Ack,
         
         ------------------- To/From FIFOs ---------------------
-        i_TX_FIFO_OCY       => ,
-        i_RX_FIFO_OCY       => ,
+        i_TX_FIFO_OCY       => TXFIFO_OCY,
+        i_RX_FIFO_OCY       => RXFIFO_OCY,
         i_RX_FIFO           => RXFIFO_data_out,
         o_RPULSE            => RXFIFO_read_pulse,
         o_WPULSE            => TXFIFO_write_pulse,
@@ -230,15 +257,15 @@ begin
         
         ---------------- IPISR toggling strobes ------------------
         -- IPISR signals are pulses coming from the top entity
-        i_MODF_INTERRUPT    => ,
-        i_Slave_MODF        => ,
-        i_DTR_EMPTY         => ,
-        i_DTR_UNDERRUN      => ,
-        i_DRR_FULL          => ,
-        i_DRR_OVERRUN       => ,
-        i_TX_FIFO_HALFEMPTY => ,
-        i_SLAVE_MODE_SELECT_INTERRUPT => ,
-        i_DRR_NOT_EMPTY     => ,
+        i_MODF_INTERRUPT    => MODF_INTERRUPT,
+        i_Slave_MODF        => Slave_MODF,
+        i_DTR_EMPTY         => DTR_EMPTY,
+        i_DTR_UNDERRUN      => DTR_UNDERRUN,
+        i_DRR_FULL          => DRR_FULL,
+        i_DRR_OVERRUN       => DRR_OVERRUN,
+        i_TX_FIFO_HALFEMPTY => TXFIFO_HALFEMPTY_pulse,
+        i_SLAVE_MODE_SELECT_INTERRUPT => SLAVE_MODE_SELECT_INTERRUPT,
+        i_DRR_NOT_EMPTY     => DRR_NOT_EMPTY,
         
         -------------------- Registers -------------------------
         o_SRR               => SRR,
@@ -254,7 +281,7 @@ begin
         o_IPIER             => IPIER,
         
         -------------------- AXI Ports -------------------------
-        i_WREQUEST          => ,
+        i_WREQUEST          => write_request,
         i_RREQUEST          => AXI_rrequest,
         o_AXI_READ_ACK      => AXI_Read_Ack,
         o_WRITE_ERROR       => Write_error,
@@ -280,7 +307,9 @@ begin
         clk                 => S_AXI_ACLK,
         rdata               => TXFIFO_data_out,
         full_flag           => TXFIFO_full_flag,
-        empty_flag          => TXFIFO_empty_flag
+        empty_flag          => TXFIFO_empty_flag,
+        occupancy_flag      => TXFIFO_OCY,
+        half_full_flag      => TXFIFO_HALF_EMPTY
         );
 
     RX_FIFO: FIFO
@@ -296,7 +325,131 @@ begin
         clk                 => S_AXI_ACLK,
         rdata               => RXFIFO_data_out,
         full_flag           => RXFIFO_full_flag,
-        empty_flag          => RXFIFO_empty_flag
+        empty_flag          => RXFIFO_empty_flag,
+        occupancy_flag      => RXFIFO_OCY,
+        half_full_flag      => RXFIFO_HALF_EMPTY
         );
+        
+    
+    Pulsing_signals: process(S_AXI_ACLK, S_AXI_ARESETN)
+    begin
+        if S_AXI_ARESETN = '0' then
+            MODF_INTERRUPT  <= '0';
+            Slave_MODF      <= '0';
+            DTR_EMPTY       <= '0';
+            DRR_FULL        <= '0';
+            TXFIFO_HALFEMPTY_pulse <= '0';
+            SLAVE_MODE_SELECT_INTERRUPT <= '0';
+            DRR_NOT_EMPTY   <= '0';
+            prev_MODF_INTERRUPT  <= '0';
+            prev_Slave_MODF      <= '0';
+            prev_DTR_EMPTY       <= '0';
+            prev_DRR_FULL        <= '0';
+            prev_TXFIFO_HALFEMPTY <= '0';
+            prev_SLAVE_MODE_SELECT_INTERRUPT <= '0';
+            prev_DRR_NOT_EMPTY   <= '0';
+            
+        elsif rising_edge(S_AXI_ACLK) then
+        ------- pulsing MODF -------
+            if MODF_level = '0' then
+                prev_MODF_INTERRUPT <= '0';
+                MODF_INTERRUPT  <= '0';
+            elsif MODF_level = '1' then
+                if prev_MODF_INTERRUPT = '0' then
+                    MODF_INTERRUPT  <= '1';
+                    prev_MODF_INTERRUPT  <= '1';
+                else
+                    MODF_INTERRUPT  <= '0';
+                end if;
+            end if;
+            
+            ------- pulsing Slave_MODF -------
+            if Slave_MODF_level = '0' then
+                prev_Slave_MODF <= '0';
+                Slave_MODF  <= '0';
+            elsif Slave_MODF_level = '1' then
+                if prev_Slave_MODF = '0' then
+                    Slave_MODF  <= '1';
+                    prev_Slave_MODF  <= '1';
+                else
+                    Slave_MODF  <= '0';
+                end if;
+            end if;
+            
+            ------- pulsing DTR_Empty -------
+            if TXFIFO_empty_flag = '0' then
+                prev_DTR_EMPTY <= '0';
+                DTR_EMPTY  <= '0';
+            elsif TXFIFO_empty_flag = '1' then
+                if prev_DTR_EMPTY = '0' then
+                    DTR_EMPTY  <= '1';
+                    prev_DTR_EMPTY  <= '1';
+                else
+                    DTR_EMPTY  <= '0';
+                end if;
+            end if;
+            
+            ------- pulsing DRR_FULL  -------
+            if RXFIFO_full_flag = '0' then
+                prev_DRR_FULL <= '0';
+                DRR_FULL  <= '0';
+            elsif RXFIFO_full_flag = '1' then
+                if prev_DRR_FULL = '0' then
+                    DRR_FULL  <= '1';
+                    prev_DRR_FULL  <= '1';
+                else
+                    DRR_FULL  <= '0';
+                end if;
+            end if;
+            
+            ------- pulsing TX_FIFO_HALFEMPTY  -------  -- to do
+            if TXFIFO_HALF_EMPTY = '0' then
+                prev_TXFIFO_HALFEMPTY <= '0';
+                TXFIFO_HALFEMPTY_pulse  <= '0';
+            elsif TXFIFO_HALF_EMPTY = '1' then
+                if prev_TXFIFO_HALFEMPTY = '0' then
+                    TXFIFO_HALFEMPTY_pulse  <= '1';
+                    prev_TXFIFO_HALFEMPTY  <= '1';
+                else
+                    TXFIFO_HALFEMPTY_pulse  <= '0';
+                end if;
+            end if;
+            
+            ------- pulsing SLAVE_MODE_SELECT_INTERRUPT  -------
+            if slave_m_select_level = '0' then
+                prev_SLAVE_MODE_SELECT_INTERRUPT <= '0';
+                SLAVE_MODE_SELECT_INTERRUPT  <= '0';
+            elsif slave_m_select_level = '1' then
+                if prev_SLAVE_MODE_SELECT_INTERRUPT = '0' then
+                    SLAVE_MODE_SELECT_INTERRUPT  <= '1';
+                    prev_SLAVE_MODE_SELECT_INTERRUPT  <= '1';
+                else
+                    SLAVE_MODE_SELECT_INTERRUPT  <= '0';
+                end if;
+            end if;
+            
+            ------- pulsing DRR_NOT_EMPTY  -------
+            if (not RXFIFO_empty_flag) = '0' then
+                prev_DRR_NOT_EMPTY <= '0';
+                DRR_NOT_EMPTY  <= '0';
+            elsif (not RXFIFO_empty_flag) = '1' then
+                if prev_DRR_NOT_EMPTY = '0' then
+                    DRR_NOT_EMPTY  <= '1';
+                    prev_DRR_NOT_EMPTY  <= '1';
+                else
+                    DRR_NOT_EMPTY  <= '0';
+                end if;
+            end if;
+            
+        end if;
+    end process;
+    
+    DTR_UNDERRUN <= TXFIFO_read_pulse and TXFIFO_empty_flag;
+    DRR_OVERRUN  <= RXFIFO_write_pulse and RXFIFO_full_flag;
+    
+    IntRdy <= '0' when AXI_RADDR = AXI_WADDR else
+              '1';
+    write_request <= IntRdy and AXI_wrequest;
+    
 
 end RTL;

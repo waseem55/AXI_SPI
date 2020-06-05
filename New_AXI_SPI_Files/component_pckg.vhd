@@ -133,8 +133,7 @@ port(
 	i_SPICR				: in std_logic_vector(31 downto 0);
 	o_MODF				: out std_logic;
 	o_Slave_MODF        : out std_logic;
-	o_slave_mode_select	: out std_logic;
-	IP2INTC_IRPT		: out std_logic
+	o_slave_mode_select	: out std_logic
 	);
 end component;
 
@@ -257,7 +256,10 @@ port(
     w_enable, r_enable, reset : in std_logic;
     clk : in std_logic;
     rdata : out std_logic_vector(width - 1 downto 0);
-    full_flag, empty_flag : out std_logic);
+    full_flag, empty_flag : out std_logic;
+    occupancy_flag: out std_logic_vector(3 downto 0);
+	half_full_flag: out std_logic
+    );
 end component;
 
 end component_pckg;

@@ -43,8 +43,7 @@ port(
 	i_SPICR				: in std_logic_vector(31 downto 0);
 	o_MODF				: out std_logic;        -- level '1' to signal error, top entity should make it a pulse if needed
 	o_Slave_MODF        : out std_logic;        -- Level '1' to signal error, top entity should make it a pulse if needed
-	o_slave_mode_select	: out std_logic;
-	IP2INTC_IRPT		: out std_logic												-- to do: figure out what to use it for
+	o_slave_mode_select	: out std_logic
 	);
 end SPI_Module;
 
